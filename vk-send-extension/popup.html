@@ -17,6 +17,22 @@
 
     .input-field {
       margin-bottom: 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .input-field label {
+      margin-right: 10px;
+    }
+
+    .input-field input[type="number"] {
+      width: 80px;
+      margin-right: 5px;
+    }
+
+    .input-field button {
+      margin-left: 5px;
     }
 
     .button-container {
@@ -91,29 +107,15 @@
 </head>
 <body>
   <h1>VK ChatBotPro</h1>
+
   <div class="input-field">
-    <label for="employeeId">Вопросы из базы №:</label>
+    <label for="employeeId">Вопросник №:</label>
     <input type="number" id="employeeId" min="1" max="2560" required>
+    <button id="loadQuestionsButton">ОК</button>
   </div>
+
   <div class="input-field">
-    <button id="loadQuestionsButton">Загрузить вопросы</button>
-  </div>
-  <div class="button-container">
-    <div class="button-row">
-      <button id="sendRandomButton">Отправить случайное сообщение</button>
-      <button id="pressEnterButton">Нажать ВВОД</button>
-    </div>
-    <div class="button-row">
-      <button id="continueButton">Продолжить</button>
-      <button id="pauseButton">Пауза</button>
-    </div>
-    <div class="button-row">
-      <button id="resetButton">Заново</button>
-      <button id="downloadHistoryButton">Скачать историю</button>
-    </div>
-  </div>
-  <div class="input-field">
-    <label for="delaySelect">Ожидание между вопросами:</label>
+    <label for="delaySelect">Изменить задержку:</label>
     <div class="custom-select-wrapper">
       <div class="custom-select" id="delaySelect">
         <span>10 секунд</span>
@@ -131,11 +133,33 @@
       </div>
     </div>
   </div>
+
+  <div class="button-row">
+    <button id="continueButton">Продолжить</button>
+    <button id="pauseButton">Приостановить</button>
+  </div>
+
+  <div class="button-container">
+    <div class="button-row">
+      <button id="sendRandomButton">Отправить случайное сообщение</button>
+      <button id="pressEnterButton">Нажать ВВОД</button>
+    </div>
+    <div class="button-row">
+      <button id="resetButton">Начать заново</button>
+      <button id="downloadHistoryButton">Скачать историю</button>
+    </div>
+  </div>
+
   <p id="messageText"></p>
+    <div id="remainingQuestionsContainer">
+    <p>Осталось вопросов:</p>
+    <p id="remainingQuestionNumber">0</p>
+  </div>
   <div id="currentQuestionContainer">
     <p>Текущий вопрос:</p>
     <p id="currentQuestionNumber">0</p>
   </div>
+
   <script>
     const delaySelect = document.getElementById("delaySelect");
     const selectValue = delaySelect.querySelector("span");
@@ -152,6 +176,15 @@
       }
     });
 
+    const options = delaySelect.querySelectorAll(".custom-select-option");
+    for (let i = 0; i < options.length; i++) {
+      options[i].addEventListener("click", function () {
+        const value = this.getAttribute("data-value");
+        selectValue.textContent = this.textContent;
+        delaySelect.value = value;
+        selectOptions.classList.remove("custom-select-options--open");
+      });
+   
     const options = delaySelect.querySelectorAll(".custom-select-option");
     for (let i = 0; i < options.length; i++) {
       options[i].addEventListener("click", function () {
