@@ -1,4 +1,5 @@
 
+![Screenshot_3](https://github.com/mykytashch/vk-send-extension/assets/129088502/f76907e8-54a8-4f1c-af45-922a3ef16a36)
 
 ## VK ChatBotPro
 
