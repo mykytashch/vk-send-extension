@@ -103,7 +103,6 @@
       background-color: #ccc;
     }
   </style>
-  <script src="popup.js"></script>
 </head>
 <body>
   <h1>VK ChatBotPro</h1>
@@ -151,7 +150,7 @@
   </div>
 
   <p id="messageText"></p>
-    <div id="remainingQuestionsContainer">
+  <div id="remainingQuestionsContainer">
     <p>Осталось вопросов:</p>
     <p id="remainingQuestionNumber">0</p>
   </div>
@@ -160,40 +159,6 @@
     <p id="currentQuestionNumber">0</p>
   </div>
 
-  <script>
-    const delaySelect = document.getElementById("delaySelect");
-    const selectValue = delaySelect.querySelector("span");
-    const selectArrow = delaySelect.querySelector(".custom-select-arrow");
-    const selectOptions = delaySelect.nextElementSibling;
-
-    delaySelect.addEventListener("click", function () {
-      selectOptions.classList.toggle("custom-select-options--open");
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!delaySelect.contains(event.target)) {
-        selectOptions.classList.remove("custom-select-options--open");
-      }
-    });
-
-    const options = delaySelect.querySelectorAll(".custom-select-option");
-    for (let i = 0; i < options.length; i++) {
-      options[i].addEventListener("click", function () {
-        const value = this.getAttribute("data-value");
-        selectValue.textContent = this.textContent;
-        delaySelect.value = value;
-        selectOptions.classList.remove("custom-select-options--open");
-      });
-   
-    const options = delaySelect.querySelectorAll(".custom-select-option");
-    for (let i = 0; i < options.length; i++) {
-      options[i].addEventListener("click", function () {
-        const value = this.getAttribute("data-value");
-        selectValue.textContent = this.textContent;
-        delaySelect.value = value;
-        selectOptions.classList.remove("custom-select-options--open");
-      });
-    }
-  </script>
+  <script src="popup.js"></script>
 </body>
 </html>
