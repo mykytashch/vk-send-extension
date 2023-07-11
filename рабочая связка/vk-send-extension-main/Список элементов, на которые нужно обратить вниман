@@ -1,0 +1,278 @@
+ Вот полный список элементов popup.html :
+
+1. Заголовок:
+   - `<h1>`: Заголовок "VK ChatBotPro"
+
+2. Поле ввода "Вопросник №":
+   - Идентификатор: `employeeId`
+   - Тип: `number`
+   - Атрибуты: `min="1"`, `max="2560"`, `required`
+
+3. Кнопка "ОК":
+   - Идентификатор: `loadQuestionsButton`
+
+4. Поле выбора задержки:
+   - Идентификатор: `delaySelect`
+   - Выпадающий список:
+     - Содержит варианты задержки, представленные в элементах `<div class="custom-select-option">`
+     - Атрибут данных значений вариантов: `data-value`
+
+5. Кнопка "Продолжить":
+   - Идентификатор: `continueButton`
+
+6. Кнопка "Приостановить":
+   - Идентификатор: `pauseButton`
+
+7. Контейнер кнопок:
+   - `<div class="button-container">`
+   - Включает две строки с кнопками:
+     - Первая строка:
+       - Кнопка "Отправить случайное сообщение": Идентификатор `sendRandomButton`
+       - Кнопка "Нажать ВВОД": Идентификатор `pressEnterButton`
+     - Вторая строка:
+       - Кнопка "Начать заново": Идентификатор `resetButton`
+       - Кнопка "Скачать историю": Идентификатор `downloadHistoryButton`
+
+8. Элементы для отображения информации:
+   - `<p id="messageText">`: Параграф для отображения текста сообщений
+   - `<p id="remainingQuestionNumber">`: Параграф для отображения оставшегося количества вопросов
+   - `<p id="currentQuestionNumber">`: Параграф для отображения текущего номера вопроса
+
+9. Всплывающее окно со статусом:
+   - `<div id="statusPopup" class="status-popup">`: контейнер для всплывающего окна. По умолчанию он скрыт, но становится видимым, когда добавляется класс `active`.
+   - `<p id="statusMessage">`: параграф для отображения сообщения о статусе во всплывающем окне
+
+10. JavaScript-интеграция:
+   - Файл `popup.js`: Содержит код для обработки событий и взаимодействия с элементами на странице
+
+
+
+
+
+Большое спасибо за подробное описание! Исходя из вашего описания и предоставленного кода, могу заметить следующее:
+
+1. В вашем коде JavaScript отсутствуют обработчики событий для некоторых кнопок и полей ввода, которые вы упомянули. Вам нужно добавить обработчики событий для следующих элементов:
+   - Поле ввода "Вопросник №" (идентификатор `employeeId`).
+   - Кнопка "ОК" (идентификатор `loadQuestionsButton`).
+   - Кнопка "Начать заново" (идентификатор `resetButton`).
+   - Кнопка "Скачать историю" (идентификатор `downloadHistoryButton`).
+
+2. Вам также следует обработать события, которые могут произойти при взаимодействии с веб-сокетом. Вы должны обработать открытие, закрытие и сообщения от сервера.
+
+3. Вам следует обновлять информацию на экране о текущем номере вопроса и оставшемся количестве вопросов. Вы можете обновлять эти элементы каждый раз, когда получаете новый вопрос или отправляете ответ.
+
+4. Нет поддержки изменения задержки. Вы указали элемент выбора задержки, но в вашем коде JavaScript нет обработки этого элемента.
+
+5. Я не вижу кода, который бы работал с заголовком "X-Employee-ID". Вам следует установить этот заголовок при отправке запросов к серверу.
+
+6. Ваша функция `storeResponse` отправляет POST-запрос на `http://localhost:5000/store_response`, но вы упомянули, что должны отправлять ответы через веб-сокет. Возможно, вам стоит пересмотреть это.
+
+7. В функции `sendMessage` вы не учитываете случай, когда все сообщения были отправлены. Вместо этого, вы просто печатаете сообщение в консоль. Возможно, вам стоит добавить какое-то действие в этом случае.
+
+8. В функции `init` вы получаете сообщения с сервера, но не проверяете статус ответа. Если сервер вернет статус 404, ваш код все равно попытается обработать ответ.
+
+Помимо этих замечаний, ваш код выглядит хорошо структурированным и понятным.
+
+
+
+
+
+   <!DOCTYPE html>
+<html>
+<head>
+  <title>VK Send and Read Extension</title>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+      background-image: url('back.png');
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .input-field label {
+      margin-right: 10px;
+    }
+
+    .input-field input[type="number"] {
+      width: 80px;
+      margin-right: 5px;
+    }
+
+    .input-field button {
+      margin-left: 5px;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+
+    .custom-select-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 150px;
+    }
+
+    .custom-select {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #eaeaea;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .custom-select-arrow {
+      width: 0;
+      height: 0;
+      margin-left: 5px;
+      border-top: 5px solid #555;
+      border-right: 5px solid transparent;
+      border-left: 5px solid transparent;
+    }
+
+    .custom-select-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      background-color: #eaeaea;
+      border-radius: 5px;
+      padding: 5px 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .custom-select-option {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .custom-select-option:hover {
+      background-color: #ccc;
+    }
+  </style>
+  <script src="popup.js"></script>
+</head>
+<body>
+  <h1>VK ChatBotPro</h1>
+
+  <div class="input-field">
+    <label for="employeeId">Вопросник №:</label>
+    <input type="number" id="employeeId" min="1" max="2560" required>
+    <button id="loadQuestionsButton">ОК</button>
+  </div>
+
+  <div class="input-field">
+    <label for="delaySelect">Изменить задержку:</label>
+    <div class="custom-select-wrapper">
+      <div class="custom-select" id="delaySelect">
+        <span>10 секунд</span>
+        <div class="custom-select-arrow"></div>
+      </div>
+      <div class="custom-select-options">
+        <div class="custom-select-option" data-value="8">8 секунд</div>
+        <div class="custom-select-option" data-value="9">9 секунд</div>
+        <div class="custom-select-option" data-value="10">10 секунд</div>
+        <div class="custom-select-option" data-value="11">11 секунд</div>
+        <div class="custom-select-option" data-value="12">12 секунд</div>
+        <div class="custom-select-option" data-value="13">13 секунд</div>
+        <div class="custom-select-option" data-value="14">14 секунд</div>
+        <div class="custom-select-option" data-value="15">15 секунд</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-row">
+    <button id="continueButton">Продолжить</button>
+    <button id="pauseButton">Приостановить</button>
+  </div>
+
+  <div class="button-container">
+    <div class="button-row">
+      <button id="sendRandomButton">Отправить случайное сообщение</button>
+      <button id="pressEnterButton">Нажать ВВОД</button>
+    </div>
+    <div class="button-row">
+      <button id="resetButton">Начать заново</button>
+      <button id="downloadHistoryButton">Скачать историю</button>
+    </div>
+  </div>
+
+  <p id="messageText"></p>
+    <div id="remainingQuestionsContainer">
+    <p>Осталось вопросов:</p>
+    <p id="remainingQuestionNumber">0</p>
+  </div>
+  <div id="currentQuestionContainer">
+    <p>Текущий вопрос:</p>
+    <p id="currentQuestionNumber">0</p>
+  </div>
+
+  <script>
+    const delaySelect = document.getElementById("delaySelect");
+    const selectValue = delaySelect.querySelector("span");
+    const selectArrow = delaySelect.querySelector(".custom-select-arrow");
+    const selectOptions = delaySelect.nextElementSibling;
+
+    delaySelect.addEventListener("click", function () {
+      selectOptions.classList.toggle("custom-select-options--open");
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!delaySelect.contains(event.target)) {
+        selectOptions.classList.remove("custom-select-options--open");
+      }
+    });
+
+    const options = delaySelect.querySelectorAll(".custom-select-option");
+    for (let i = 0; i < options.length; i++) {
+      options[i].addEventListener("click", function () {
+        const value = this.getAttribute("data-value");
+        selectValue.textContent = this.textContent;
+        delaySelect.value = value;
+        selectOptions.classList.remove("custom-select-options--open");
+      });
+   
+    const options = delaySelect.querySelectorAll(".custom-select-option");
+    for (let i = 0; i < options.length; i++) {
+      options[i].addEventListener("click", function () {
+        const value = this.getAttribute("data-value");
+        selectValue.textContent = this.textContent;
+        delaySelect.value = value;
+        selectOptions.classList.remove("custom-select-options--open");
+      });
+    }
+  </script>
+</body>
+</html>
