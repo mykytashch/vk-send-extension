@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "My Extension",
+  "version": "1.0",
+  "description": "Description of my extension",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads",
+    "tabs",
+    "https://vk.com/*"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://vk.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
