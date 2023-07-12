@@ -33,4 +33,4 @@ You can contribute to the project by creating new features, fixing bugs, or impr
 VK ChatBotPro is distributed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
 ### Author
-VK ChatBotPro is developed by [Your Name].
+VK ChatBotPro is developed by Mykyta Shcheholevatyi
